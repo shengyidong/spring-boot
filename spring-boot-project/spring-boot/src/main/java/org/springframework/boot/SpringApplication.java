@@ -304,21 +304,29 @@ public class SpringApplication {
 	public ConfigurableApplicationContext run(String... args) {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
+		//声明一个应用上下文
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty();
+		//获取应用运行监听器（从spring.factory查询SpringApplicationRunListeners的监听器）
 		SpringApplicationRunListeners listeners = getRunListeners(args);
+		//启动监听器
 		listeners.starting();
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			//创建environment
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
 			configureIgnoreBeanInfo(environment);
 			Banner printedBanner = printBanner(environment);
+			//根据应用类型创建对应的应用上下文
 			context = createApplicationContext();
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
 					new Class[] { ConfigurableApplicationContext.class }, context);
+			//刷新上下文之前处理
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			//刷新上下文
 			refreshContext(context);
+			//刷新上下文之后处理
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
