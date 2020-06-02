@@ -352,10 +352,12 @@ public class SpringApplication {
 
 	private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments) {
-		// Create and configure the environment
+		// Create and configure the environment 创建一个env
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
+		//配置env
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
 		ConfigurationPropertySources.attach(environment);
+		//触发监听器（触发ConfigFileApplicationListeners,这个监听器会加载application.properties或application.yml文件）
 		listeners.environmentPrepared(environment);
 		bindToSpringApplication(environment);
 		if (!this.isCustomEnvironment) {
@@ -492,7 +494,9 @@ public class SpringApplication {
 			ConversionService conversionService = ApplicationConversionService.getSharedInstance();
 			environment.setConversionService((ConfigurableConversionService) conversionService);
 		}
+		//添加初始的properties（并未加载如application.properties或application.yml的properties）
 		configurePropertySources(environment, args);
+		//添加初始的profiles（并未加载如application.properties或application.yml的profiles）
 		configureProfiles(environment, args);
 	}
 
