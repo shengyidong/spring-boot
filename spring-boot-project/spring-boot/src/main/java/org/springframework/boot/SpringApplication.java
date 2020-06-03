@@ -381,9 +381,13 @@ public class SpringApplication {
 
 	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
 			SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
+		//设置env
 		context.setEnvironment(environment);
+		//后置处理
 		postProcessApplicationContext(context);
+		//调用ApplicationContextInitializer接口的实现
 		applyInitializers(context);
+		//发布ApplicationContext准备事件
 		listeners.contextPrepared(context);
 		if (this.logStartupInfo) {
 			logStartupInfo(context.getParent() == null);
@@ -391,10 +395,13 @@ public class SpringApplication {
 		}
 		// Add boot specific singleton beans
 		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+		//注册args为单例的bean
 		beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
+		//注册banner
 		if (printedBanner != null) {
 			beanFactory.registerSingleton("springBootBanner", printedBanner);
 		}
+		//设置beanFactory中是否允许重复bean覆盖
 		if (beanFactory instanceof DefaultListableBeanFactory) {
 			((DefaultListableBeanFactory) beanFactory)
 					.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
@@ -402,10 +409,12 @@ public class SpringApplication {
 		if (this.lazyInitialization) {
 			context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
 		}
-		// Load the sources
+		// Load the sources加载main方法所在类
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
+		//注册main方法所在类到beanFactory
 		load(context, sources.toArray(new Object[0]));
+		//发布上下文加载事件
 		listeners.contextLoaded(context);
 	}
 
@@ -1148,9 +1157,11 @@ public class SpringApplication {
 	 */
 	public Set<Object> getAllSources() {
 		Set<Object> allSources = new LinkedHashSet<>();
+		//添加主类
 		if (!CollectionUtils.isEmpty(this.primarySources)) {
 			allSources.addAll(this.primarySources);
 		}
+		//添加资源类
 		if (!CollectionUtils.isEmpty(this.sources)) {
 			allSources.addAll(this.sources);
 		}

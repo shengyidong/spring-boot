@@ -154,6 +154,7 @@ class BeanDefinitionLoader {
 			load(loader);
 		}
 		if (isComponent(source)) {
+			//注解注册bean
 			this.annotatedReader.register(source);
 			return 1;
 		}
@@ -174,6 +175,7 @@ class BeanDefinitionLoader {
 			}
 			return this.groovyReader.loadBeanDefinitions(source);
 		}
+		//xml注册bean
 		return this.xmlReader.loadBeanDefinitions(source);
 	}
 
